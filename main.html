@@ -29,7 +29,7 @@
     </div>
 
 <script>
-  const msg = new SpeechSynthesisUtterance();
+
    let voices = [];
   const voicesDropdown = document.querySelector('#voices');
 	
@@ -37,25 +37,50 @@
 const pitch = document.querySelector("#pitch");
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
-  speechSynthesis.onvoiceschanged = () => {
-    voices = speechSynthesis.getVoices();
-	  if(voices.length==0){
-		  voicesDropdown.innerHTML =
-            '<option>No voices available</option>';
-		  return;
-     }
+	let currentText = "";
+	     function loadVoices(){
 
-    voicesDropdown.innerHTML = '<option value="">Select A Voice</option>';
+      voices = speechSynthesis.getVoices();
 
-    voices.forEach((voice) => {
-        const option = document.createElement("option");
 
-        option.value = voice.name;
-        option.textContent = `${voice.name} (${voice.lang})`;
+      // Edge case: no voices available
+      if(voices.length === 0){
 
-        voicesDropdown.appendChild(option);
-    });
-};
+          voicesDropdown.innerHTML =
+          '<option>No voices available</option>';
+
+          return;
+      }
+
+
+      voicesDropdown.innerHTML =
+      '<option value="">Select A Voice</option>';
+
+
+      voices.forEach((voice)=>{
+
+          const option = document.createElement("option");
+
+          option.value = voice.name;
+
+          option.textContent =
+          `${voice.name} (${voice.lang})`;
+
+
+          voicesDropdown.appendChild(option);
+
+      });
+
+   }
+
+
+
+   // Load voices initially
+   loadVoices();
+
+
+   // Load voices when browser provides them
+   speechSynthesis.onvoiceschanged = loadVoices;
 
   //Your code goes here
 	let utterance=null;
@@ -65,16 +90,19 @@ const pitch = document.querySelector("#pitch");
 		 if(textarea.value.trim()===""){
 		return;
       }
+		 currentText = textarea.value;
 		
-		 utterance=new SpeechSynthesisUtterance(textarea.value);
+		 utterance=new SpeechSynthesisUtterance(currentText);
 		const selectvoice=voices.find(voice=>voice.name===voicesDropdown.value)
 		   utterance.voice=selectvoice;
 		utterance.rate = Number(rate.value);
         utterance.pitch = Number(pitch.value);
+		speechSynthesis.cancel();
 		speechSynthesis.speak(utterance);
    });
 	stopButton.addEventListener('click',()=>{
 		speechSynthesis.cancel();
+		utterance = null;
 })
 	voicesDropdown.addEventListener("change", () => {
 
@@ -82,20 +110,46 @@ const pitch = document.querySelector("#pitch");
 
         speechSynthesis.cancel();
 
-        const newUtterance = new SpeechSynthesisUtterance(textarea.value);
+         utterance = new SpeechSynthesisUtterance(currentText);
 
         const selectedVoice = voices.find(
             (voice) => voice.name === voicesDropdown.value
         );
  
-        newUtterance.voice = selectedVoice;
-		newUtterance.rate = Number(rate.value);
-        newUtterance.pitch = Number(pitch.value);
+        utterance.voice = selectedVoice;
+		utterance.rate = Number(rate.value);
+        utterance.pitch = Number(pitch.value);
 
-        speechSynthesis.speak(newUtterance);
+        speechSynthesis.speak(utterance);
     }
 
 });
+	rate.addEventListener("input",()=>{
+
+
+       if(utterance){
+
+          utterance.rate = Number(rate.value);
+
+       }
+
+   });
+
+
+
+
+
+   // Dynamically update pitch
+   pitch.addEventListener("input",()=>{
+
+
+       if(utterance){
+
+          utterance.pitch = Number(pitch.value);
+
+       }
+
+   });
 		
 </script>
 
