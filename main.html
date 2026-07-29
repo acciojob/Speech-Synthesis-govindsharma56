@@ -58,6 +58,7 @@ const pitch = document.querySelector("#pitch");
 };
 
   //Your code goes here
+	let utterance=null;
 	let textarea=document.querySelector('#text');
 	
 	speakButton.addEventListener('click',()=>{
@@ -65,7 +66,7 @@ const pitch = document.querySelector("#pitch");
 		return;
       }
 		
-		const utterance=new SpeechSynthesisUtterance(textarea.value);
+		 utterance=new SpeechSynthesisUtterance(textarea.value);
 		const selectvoice=voices.find(voice=>voice.name===voicesDropdown.value)
 		   utterance.voice=selectvoice;
 		utterance.rate = Number(rate.value);
@@ -75,6 +76,24 @@ const pitch = document.querySelector("#pitch");
 	stopButton.addEventListener('click',()=>{
 		speechSynthesis.cancel();
 })
+	voicesDropdown.addEventListener("change", () => {
+
+    if (speechSynthesis.speaking) {
+
+        speechSynthesis.cancel();
+
+        const newUtterance = new SpeechSynthesisUtterance(currentText);
+
+        const selectedVoice = voices.find(
+            (voice) => voice.name === voicesDropdown.value
+        );
+ 
+        newUtterance.voice = selectedVoice;
+
+        speechSynthesis.speak(newUtterance);
+    }
+
+});
 		
 </script>
 
