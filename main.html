@@ -89,6 +89,8 @@ const pitch = document.querySelector("#pitch");
         );
  
         newUtterance.voice = selectedVoice;
+		newUtterance.rate = Number(rate.value);
+        newUtterance.pitch = Number(pitch.value);
 
         speechSynthesis.speak(newUtterance);
     }
