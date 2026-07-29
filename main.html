@@ -82,7 +82,7 @@ const pitch = document.querySelector("#pitch");
 
         speechSynthesis.cancel();
 
-        const newUtterance = new SpeechSynthesisUtterance(currentText);
+        const newUtterance = new SpeechSynthesisUtterance(textarea.value);
 
         const selectedVoice = voices.find(
             (voice) => voice.name === voicesDropdown.value
