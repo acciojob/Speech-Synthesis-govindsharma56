@@ -39,6 +39,11 @@ const pitch = document.querySelector("#pitch");
   const stopButton = document.querySelector('#stop');
   speechSynthesis.onvoiceschanged = () => {
     voices = speechSynthesis.getVoices();
+	  if(voices.length==0){
+		  voicesDropdown.innerHTML =
+            '<option>No voices available</option>';
+		  return;
+     }
 
     voicesDropdown.innerHTML = '<option value="">Select A Voice</option>';
 
@@ -54,7 +59,12 @@ const pitch = document.querySelector("#pitch");
 
   //Your code goes here
 	let textarea=document.querySelector('#text');
+	
 	speakButton.addEventListener('click',()=>{
+		 if(textarea.value.trim()===""){
+		return;
+      }
+		
 		const utterance=new SpeechSynthesisUtterance(textarea.value);
 		const selectvoice=voices.find(voice=>voice.name===voicesDropdown.value)
 		   utterance.voice=selectvoice;
